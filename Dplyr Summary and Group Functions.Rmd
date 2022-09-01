@@ -1,0 +1,119 @@
+---
+title: "Dplyr Summary and Group Functions"
+output: html_notebook
+---
+
+### Install Packages
+```{r}
+#Install the dplyr package
+#install.packages("dplyr")
+
+# Load the dplyr library into my current session
+library(dplyr)
+
+# This package contains a variety of datasets. For a complete list
+# library(help = "datasets")
+# library(datasets)  # practic R datasets
+
+library(palmerpenguins) # onther datase
+```
+
+### Load R datasets
+```{r}
+# load the data
+data(iris)
+data(penguins)
+
+df <- iris
+data <- penguins
+
+# To load from csv 
+# df <- read.csv("yourData.csv")
+```
+
+### iris dataset and penguins dataset
+```{r}
+head(df,3)
+```
+```{r}
+head(data,3)
+```
+
+### Summary cases
+Summary functions take vectors as input and return one value. Apply summary functions to columns to create a new table of summary statistics.
+
+### 1. summarise, summarize and summary
+
+Some useful arguments for `r "summarize()"`:
+    
+    .data
+    Center: mean(), median()
+    Spread: sd(), IQR(), mad()
+    Range: min(), max(), quantile()
+    Position: first(), last(), nth(),
+    Count: n(), n_distinct()
+    Logical: any(), all()
+    
+How to use summary functions:
+```{r}
+# summarise()
+df %>% 
+    summarise(mean(Sepal.Length), n()) # n() return the dataset size
+```
+```{r}
+# simular function (summarize())
+df %>% 
+    summarize(first(Sepal.Length), any(), sd(Sepal.Length)) #sd() return the standard deviation
+```
+```{r}
+# get a general summary
+df %>% 
+    summary()
+```
+
+#### 2. Count Function
+(
+`r "count()"` function returns the count of unique value for one or more variables.
+
+Some useful arguments for `r "count()"`:
+
+    .data
+    wt = NULL: Frequency weights. Can be NULL or a variable.
+    sort = FALSE: If TRUE, will show the largest groups at the top.
+    name = "ne_column": The name of the new column in the output. (column n)
+    .drop = FALSE: Ff FALSE will include counts for empty groups
+    
+How to use `r "count()"`
+```{r}
+data %>% count(species, sort = TRUE, name = "count")
+```
+
+### Group Cases
+### 1. Group By Function
+
+`r "group_by()"` function is used to create a grouped copy of a table by columns. `r "group_by()"` takes an existing tbl and converts it into a grouped tbl where 
+operations are performed "by group"
+
+some useful arguments for `r "group_by()"`:
+
+    .data
+    .add = FALSE:
+    .drop = TRUE:
+    
+How to use `r "group_by()"`.
+```{r}
+data %>% 
+    group_by(species, sex) %>% count(species, name= "species count")
+```
+
+### 2. Row Wise Function
+`r "rowwise()"` function is used to group data into individual rows. `r "rowwise()"` works like `r "group_by()"` in the sense that it doesn’t change what the data looks like; it changes how dplyr verbs operate on the data.
+
+    * use with `r "mutate()"` to maximaze results.
+    
+How to use `r `rowwise()`.
+```{r}
+data %>% 
+    rowwise(species) %>% 
+    count(species,name = "count of species")
+```
