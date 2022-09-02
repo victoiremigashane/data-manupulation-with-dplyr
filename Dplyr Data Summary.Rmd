@@ -1,0 +1,141 @@
+---
+title: "Dplyr Data Summary"
+outhor: "Migashane Victoire"
+output: html_notebook
+---
+
+### Install and load dplyr
+```{r}
+# To get more data sets, you can use `library(help = "datasets")`
+
+rm(list = ls())
+# install.packages(dplyr)
+library(dplyr)
+
+# 1st way to load R data
+#force iris to a tibble (lazy data frame, doesn't do all data frame operations)
+data <- dplyr::tbl_df(iris)
+head(data,3)
+
+#2nd way to load R data
+# `data()` loads specific data sets (good data frame)
+data(iris)
+df <- iris
+head(df)
+
+# 3rd way to load data
+# Read a file in table formatand create a data frame from it.
+# my_data <- read.csv("my_data.csv")
+```
+
+### View data
+```{r}
+# View data set in spreadsheet-like format (note: capital V)
+View(df)
+
+# Shows the structure of an arbitrary R object
+str(df)
+
+# For information dansity use `glimpse()`, this will show as much data as possible similar to str()
+dplyr::glimpse(df)
+
+# `%>%` Passing the object to the left as the first argument of the right function
+df %>% summary()
+```
+
+### Summarise Data
+
+#### 1. Summarise or Summarize Function
+Summary functions take vectors as input and return a single value. Apply summary functions to columns to create a new table of summary statistics.
+
+Arguments:
+    
+    .data: A data frame.
+    ...: Name value pair of summary functions.
+    .groups: grouping structure of the result.
+    
+Useful functions:
+
+    Center: mean(), median()
+    Spread: sd(), IQR(), mad()
+    Range: min(), max(), quantile()
+    Position: first(), last(), nth(),
+    Count: n(), n_distinct()
+    Logical: any(), all()
+    
+Helper functions:
+    
+    summarise_each(): applies summary function to each column
+    count()
+    
+List of summary functions:
+
+Note: The all take a vector of values and return a single value... useful as summaise() arguments.
+
+    Count:
+    
+        n(): return number of values/rows
+        n_distinct(): return number of unique values
+        sum(!is.na()): return number non-NA values
+        
+    Position:
+    
+        mean(): return mrean,  also mean(!is.na())
+        median(): return the median
+        
+    Logical:
+    
+        mean(): proportion of TRUE's
+        sum(): number of TRUE's
+        
+    Order:
+    
+        first(): first value
+        last(): last value
+        nt(): value in th nth location of vector
+        
+    Rank:
+    
+        quantile(): return nth quantile
+        min(): return minimum value
+        max(): return maximum value
+        
+    Spread:
+    
+        IQR(): inter-quartile range
+        mad(): median absolute deviation
+        sd(): standard deviation
+        var(): variance
+    
+Usage:
+```{r}
+# summarise()
+df %>% 
+    summarise(ave = mean(Sepal.Length), len = n()) # n() return the dataset size
+
+# simular function (summarize())
+df %>% 
+    summarize(firstLen = first(Sepal.Length), Is_NA = sum(is.na(Sepal.Length)), SD = sd(Sepal.Length)) #sd() return the standard deviation
+
+# summarise_each()
+df %>% summarise_each(funs(mean(Sepal.Width)))
+```
+
+#### 2. Count Function
+
+count() function returns the count of unique value for one or more variables.
+
+df %>% count(a, b) is roughly equivalent to df %>% group_by(a, b) %>% summarise(n = n()).
+
+Arguments:
+    
+    .data
+    wt = NULL: Frequency weights. Can be NULL or a variable.
+    sort = FALSE: If TRUE, will show the largest groups at the top.
+    name = "ne_column": The name of the new column in the output. (column n)
+    .drop = FALSE: Ff FALSE will include counts for empty groups
+    
+Usage:
+```{r}
+df %>% count(Species, name = "Unique_count")
+```
