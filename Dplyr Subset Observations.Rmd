@@ -1,0 +1,125 @@
+---
+title: "Dplyr Subset Observations"
+author: "Migashane Victoire"
+output: html_notebook
+---
+
+```{r}
+library(palmerpenguins)
+
+data(penguins)
+df <- penguins
+head(df)
+```
+
+### 1. Filter Function
+
+The `filter()` function is used to extract rows of a data frame that satisfy logical conditions.
+
+Arguments:
+
+    .data: A data frame to extract from
+    ...: Expressions that return a logical value, adn defined in terms of the variables in the data frame.
+    .preserve: if FALSE (deafult) the grouping structure is recalculated based on the resulting data.
+
+Useful functions:
+
+    == : equal to, != : not equal to,
+    > : greater than, < : less than,
+    >= : greater than or equal to, 
+    <= : less than or eual to,
+    & : and, | : or, ! : not, 
+    %in% = in, xor(): or, 
+    is.na() : is none, !is.na() isn't none, 
+    between(): is between, near(): is near
+    
+Usage:
+
+```{r}
+df %>%
+    filter(species == "Adelie" & sex == "male" & between(bill_length_mm, 38,39)) 
+
+df %>%
+    filter(between(flipper_length_mm, 180,190) | is.na(bill_depth_mm),sort = TRUE) %>%
+    count(species)
+```
+
+### 2. Slice Function
+
+The `slice()` function lets you select rows by their index positions.
+
+Arguments:
+    
+    .data: A data frame to select from.
+    ...: the index positions (integer row values)
+    .preserve(): False: false the grouping structure is recalculated based on the resulting data, other wise the groupping is kept the same.
+    order_by: the variable(column) to order by.
+    with_ties: if TRUE return more rows than you request, other wise return one row.
+    weight_by: must evaluate a vector of positive numbers an that all sum to 100%.
+    repace: if TRUE, sampling should be performed with replacement.
+    
+Related slice methodes:
+
+    slice_head(): Returns the first few rows.
+    slice_tail(): Returns the last few rows.
+    slice_min(): Returns the minimum value in the specified column
+    slice_max(): Returns the maximum value in teh specified column
+    slice_sample(): Return the sample of specified lengh
+
+Usage:
+
+```{r}
+# return row 5 to row 10
+df %>% slice(5:10)
+
+# return the first 3 rows
+df %>% slice_head(n = 3)
+
+# return the random 8 rows
+df %>% slice_sample(n = 8)
+
+# return the min value in a column
+df %>% slice_min(body_mass_g )
+```
+
+### 3. Distict Function
+
+The `distinct()` function selects only unique rows from from a data frame, removing all rows with duplicated values. This is similar to unique() but faster.
+
+Arguments:
+
+    .data: A data frame to select from.
+    ...: Optional variable to use when determining uniqueness.
+    .keep_all: if TRUE, keep all variables in the data frame if ... is not distinct
+Usage:
+
+```{r}
+df %>%
+    distinct(island)
+
+# similar to distinct is count()
+df %>%
+    count(island)
+```
+
+
+### 4. Sample Function
+
+The  `sample()` function retunrn a random sample of specified zise from the elements of argument x. `sample()` takes the place for `sample_frac()` and `sample_n()`. 
+
+Arguments:
+
+    x: A vector of one or more elements or a positive integer value.
+    n: The number of items to choose form.
+    size: The number of items to return.
+    replace: if TRUE, sampling should be performed with replacement.
+    prob: A vector of probability weights to get the elements of the sample vector.
+    useHash: indicats if the hash-version of the algorithm should be used.
+    
+Note: Install `sampling` package from CRAN for other methods of weighted sampling.
+
+Usage:
+
+```{r}
+sample(c(0,1),10,  size = 4)
+```
