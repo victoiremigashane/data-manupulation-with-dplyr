@@ -1,0 +1,135 @@
+---
+title: "Dplyr Manipulate Variables"
+author: "Victoire Migashane"
+date: "9/5/2022"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(palmerpenguins)
+df <- penguins
+```
+
+#### Dataset
+
+```{r}
+head(df)
+```
+### 1. Pull Function
+
+The `pull()` function lates you extract column values as a vector by name or index. `pull()` is very similar to `$`
+
+#### Arguments
+
+    .data: A data frame to full from.
+    var: a variable (column name, positive/negative integer)
+    name: Specifies the column to be used as names for a named vector.
+    ...: for use by methods.
+  
+#### Usage
+
+```{r}
+df %>% 
+  pull(species) %>% # not a data frame but the column cell values
+  unique()
+
+#similarly the $
+df$species %>% 
+  unique()
+```
+### 2. Relocate Function
+
+The `relocate()` function is use to move a specified column to a different position in the data frame.
+
+#### Arguments
+
+    .data: A data frame to select from.
+    ...: columns to move.
+    .before: destination of the columns.
+    .after: selected using the columns to move
+  
+#### Usage
+
+```{r}
+df %>% 
+  relocate(year, sex) %>% 
+  head(3)
+```
+
+### 3. Select Function
+
+The `select()` function makes it easier to refer (select) variables by name or heper function.
+
+Ex: a:f == Select all columns from `a` on the left to `f` on the right.
+
+#### Arguments:
+
+    .data: A data frame to select from
+    ...: One or more unquoted expressions separated by commas.
+    
+#### Helper function:
+
+    `:`: selecting a range of consecutive variables (select between)
+    `-` : Select columns except
+    `!`: take the complement of a set of variables
+    `c()`: for combining selections.
+    `& and |`: for selecting the intersextion of twe sets of variables
+    `everything()` : Select every column.
+    `last_col()`: Select the last column.
+    `starts_with()`: Select columns whose names starts with (characture string).
+    `ends_with()`: Select columns whose name ends with (characture string).
+    `contains()`: Select columns whose name contains (characture string).
+    `matches()`: Select columns whose name matches a regular expression.
+    `num_range()`: Select columns that mache a numerical range like x1,x2,x3
+    `all_of(), any_of()`: Select columns whose names are all present in a character vector.
+    `one_of()`: select columns whose names are in a group of names.
+    `where()`: select a variable with a function
+
+#### Usage:
+
+```{r}
+# Return every column between bill_length_mm and body_mass_g
+df %>%
+    select(bill_length_mm:body_mass_g) %>%
+    head(3)
+
+# return every column that is not in the list
+df %>% 
+    select(-c(island, species, sex, year)) %>%
+    head(3)
+# return every column
+df %>%
+    select(everything()) %>%
+    head(3)
+
+# return the last column
+df %>% 
+    select(last_col()) %>%
+    head(3)
+```
+```{r}
+# return every column that starts with b and ends with m
+df %>%
+    select(starts_with("b") & ends_with("m")) %>%
+    head(3)
+
+# return column names that contain the string land
+df %>%
+    select(contains("land")) %>% 
+    head(3)
+
+# return columns whose names are all present in a character vector
+# also works for any_of()
+df %>% 
+    select(all_of(c("bill_length_mm", "flipper_length_mm", "body_mass_g"))) %>% 
+    head(3)
+
+# return columns whoes data type are integers
+df %>% 
+    select(where(is.numeric)) %>% 
+    head(3)
+```
+
