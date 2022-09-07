@@ -1,0 +1,111 @@
+---
+title: "Dplyr Make New Variables (Columns)"
+author: "Victoire Migashane"
+date: "9/6/2022"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(palmerpenguins)
+df <- penguins
+```
+```{r}
+head(df)
+```
+
+### 1. Rename function
+
+The `rename()` function changes the names of individual columns using the `new_name = old_name`. A similar function is `rename_with` which renames the column using a function.
+
+#### Arguments
+
+    .data: A data frame to apply changes to
+    ...: rename selected volumns `new = old`
+    .fn: transforms the selected columns to return a charcture vector of same length
+    .cols: columns to rename (deafult is ALL the columns)
+    
+#### Usage
+
+```{r}
+df %>% 
+    rename(gender = sex, col = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm")) %>% 
+    head(3)
+```
+
+
+### 2. Mutate and Transmute Functions
+
+The `mutate()` function is used to acompute and append new columns to an existing data frame.
+
+The `transmute()` function does the opposite of `mutate()`. This function add new variables and drops (remove) existing ones.
+
+#### Arguments
+
+    .data: A data frame
+    ...: The name given to the new column
+    .keep: control which columns to retain in the out put. `.keep = c("all", "used", "unused", "none")`
+    .before/.after: control where new columns should appear
+
+#### Usage
+
+```{r}
+df %>% 
+    mutate(bill_and_flipper_len = bill_length_mm + flipper_length_mm, .keep = "used") %>% 
+    head(3)
+
+df %>% 
+    transmute(species, island, bill_and_flipper_len = bill_length_mm + flipper_length_mm) %>% 
+    head(3)
+```
+
+
+### 3. Mutate window functions
+
+The `muate()` function uses uses window functions. These are functions that take vector of values and return another vector of values with same lenght.
+
+#### Offset
+
+    `lag()`: offset elements by 1
+    `lead(): offset elements by -1
+    
+#### Cumulative aggregate
+
+    `cumall()`: cumulative all
+    `cumany()`: cumulative any
+    `cummax()`: cumulative max
+    `cummin()`: cumulative min
+    `cummean()`: cumulative mean
+    `cumprod()`: cumulative prod
+    `cumsum()`: cumulative sum
+
+#### Ranking
+
+    `cume_dist()`: proportion of all values <=
+    `dense_rank()`: randk w ties  = min, no gapes
+    `min_rank()`: randk with ties = min
+    `ntile()`: bins into n bins
+    `percent_rank()`: min_rank scaled to [0,1]
+    `row_number()`: rank with ties =  "first
+    
+#### Math
+
+    arithmetic ops: `+, -, *, /, ^, %/%, %%`
+    logs: `log(), log2(), log10()`
+    logical comparizons: `<, >, <=, >=, ==, !=`
+    x >= left <= right: `between()`
+    sage == for floating point numbers: `near()`
+    
+#### Miscellaneous
+
+    `case_when()`: multi_case if_else()
+    `coalsce()`: first non-NA values by element across a set of vector
+    `if_else()`: element-wise if() + else()
+    `na_if`: replace specific values with NA
+    `pmax()`: element wise max()
+    `pmin()`: element wise min()
+
+
